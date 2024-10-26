@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-const schema = mongoose.schema;
+const schema = mongoose.Schema;
 
-mongoose.concent("mongodb://localhost:27017/paytm")
+mongoose.connect("mongodb://localhost:27017/paytm")
 
 const userSchema = new schema({
     username: {
@@ -34,7 +34,8 @@ const userSchema = new schema({
 
 const accountSchema = new schema({
     userID: {
-        type: schema.type.ObjectId,
+        // type: schema.Type.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
     },

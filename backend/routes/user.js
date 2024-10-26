@@ -4,15 +4,16 @@ const { User, Acccount } = require("../db")
 const jwt = require("jsonwebtoken")
 const { JWT_SECRET } = require("../config")
 const { authMiddleware } = require("../middleware")
+const zod = require("zod");
 
 const signupBody = zod.object({
-    username: zod.String().email(),
-    firstName: zod.String(),
-    lastName: zod.String(),
-    password: zod.String()
+    username: zod.string().email(),
+    firstName: zod.string(),
+    lastName: zod.string(),
+    password: zod.string()
 })
 
-router.post("/signup", async(req, res) = {
+router.post("/signup", async (req, res) => {
     const success = signupBody.safeParse(req.body)
     if(!success) {
         return res.status(411).json({
@@ -43,7 +44,7 @@ router.post("/signup", async(req, res) = {
 
     await Account.create({
         userId,
-        balance: 1 + Math.random() * 1000;
+        balance: 1 + Math.random() * 1000
     })
 
     const token = jwt.sign({
@@ -57,8 +58,8 @@ router.post("/signup", async(req, res) = {
 })
 
 const signinBody = zod.object({
-    username: zod.String().email(),
-    password: zod.String()
+    username: zod.string().email(),
+    password: zod.string()
 })
 
 router.post("/signin", async (req, res) => {
@@ -102,9 +103,9 @@ router.post("/signin", async (req, res) => {
 })
 
 const updateBody = zod.object({
-    password: zod.String().optional(),
-    firstName: zod.String().optional(),
-    lastName: zod.String().optional()
+    password: zod.string().optional(),
+    firstName: zod.string().optional(),
+    lastName: zod.string().optional()
 })
 
 router.put("/", authMiddleware, async (req, res) => {
