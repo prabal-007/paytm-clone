@@ -3,6 +3,7 @@ const router = express.Router()
 const { User } = require("../db")
 const jwt = require("jsonwebtoken")
 const { JWT_SECRET } = require("../config")
+const { authMiddleware } = require("../middleware")
 
 const signupBody = zod.object({
     username: zod.String().email(),
@@ -101,12 +102,12 @@ const updateBody = zod.object({
     lastName: zod.String().optional()
 })
 
-router.put("/", async (req, res) => {
+router.put("/", authMiddleware, async (req, res) => {
     const success = updateBody.safeParse(req.body)
 
     if (!success){
         return res.status(404).json({
-            message: "Invalid inputs!"
+            message: "Error while updating information!"
         })
     }
     
@@ -114,7 +115,7 @@ router.put("/", async (req, res) => {
         id: req.userId
     })
 
-    res.json({
+    res.status(200).json({
         message: "User updated successfully"
     })
 
@@ -135,7 +136,13 @@ router.get("/bulk", async(req, res) => {
         }]
     })
 
-    res,json({
+    if (!users) {
+        return res.status(404).json({
+            message: "No users found"
+        })
+    }
+
+    res.status(200).json({
         user: users.map(user => ({
             username: user.username,
             firstName: user.firstName,
