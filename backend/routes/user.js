@@ -1,10 +1,11 @@
 const express = require('express')
 const router = express.Router()
-const { User, Acccount } = require("../db")
+const { User, Account } = require("../db")
 const jwt = require("jsonwebtoken")
 const { JWT_SECRET } = require("../config")
 const { authMiddleware } = require("../middleware")
 const zod = require("zod");
+const argon2 = require("argon2");
 
 const signupBody = zod.object({
     username: zod.string().email(),
@@ -15,7 +16,7 @@ const signupBody = zod.object({
 
 router.post("/signup", async (req, res) => {
     const success = signupBody.safeParse(req.body)
-    if(!success) {
+    if (!success) {
         return res.status(411).json({
             message: "Email already exist / invalid inputs"
         })
@@ -25,30 +26,31 @@ router.post("/signup", async (req, res) => {
         username: req.body.username
     })
 
-    if(existingUser) {
+    if (existingUser) {
         return res.status(411).json({
             message: "User already exist!"
         })
     }
 
-    const password_hash = await argon2.hash(req.body.password);
+    // const password_hash = await argon2.hash(req.body.password);
 
-    const user = new User.create({
+    const user = await User.create({
         username: req.body.username,
-        password: password_hash,
+        // password: password_hash,
+        password: req.body.password,
         firstName: req.body.firstName,
-        lastName: req.body.lastname
+        lastName: req.body.lastName
     })
 
-    const userId = user._id;
+    const userID = user._id;
 
     await Account.create({
-        userId,
-        balance: 1 + Math.random() * 1000
+        userID,
+        balance: 1 + Math.random() * 10000
     })
 
     const token = jwt.sign({
-        userId
+        userID
     }, JWT_SECRET);
 
     res.json({
@@ -72,7 +74,8 @@ router.post("/signin", async (req, res) => {
     }
 
     const existingUser = User.findOne({
-        username: req.body.username
+        username: req.body.username,
+        password: req.body.password
     })
 
     if (!existingUser) {
@@ -80,26 +83,26 @@ router.post("/signin", async (req, res) => {
             message: "User not found / Error while logging in"
         })
     } else {
-        const isValidPassword = await argon2.verify(existingUser.password_hash, req.body.password)
+        // const isValidPassword = await argon2.verify(existingUser.password_hash, req.body.password)
 
-        if (!isValidPassword) {
-            return res.status(411).json({
-                message: "Invalid password / Error while logging in"
-            })
-        } else {
-            const token = jwt.sign({
-                userId: existingUser._id
-            }, JWT_SECRET)
+        // if (!isValidPassword) {
+        //     return res.status(411).json({
+        //         message: "Invalid password / Error while logging in"
+        //     })
+        // } else {
+        const token = jwt.sign({
+            userID: existingUser._id
+        }, JWT_SECRET)
 
-            return res.status(200).json({
-                token: token
-            })
-        }
-    }
+        return res.status(200).json({
+            token: token
+        })
+    // }
+}
 
     res.status(411).json({
-        message: "Error while logging in"
-    })
+    message: "Error while logging in"
+})
 })
 
 const updateBody = zod.object({
@@ -111,14 +114,14 @@ const updateBody = zod.object({
 router.put("/", authMiddleware, async (req, res) => {
     const success = updateBody.safeParse(req.body)
 
-    if (!success){
+    if (!success) {
         return res.status(404).json({
             message: "Error while updating information!"
         })
     }
-    
+
     await User.updateOne(req.body, {
-        id: req.userId
+        id: req.userID
     })
 
     res.status(200).json({
@@ -127,7 +130,7 @@ router.put("/", authMiddleware, async (req, res) => {
 
 })
 
-router.get("/bulk", async(req, res) => {
+router.get("/bulk", async (req, res) => {
     const filter = req.query.filter || "";
 
     const users = await User.find({
@@ -153,7 +156,7 @@ router.get("/bulk", async(req, res) => {
             username: user.username,
             firstName: user.firstName,
             lastName: user.lastName,
-            userId: user._id
+            userID: user._id
         }))
     })
 })

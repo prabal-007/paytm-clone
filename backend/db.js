@@ -13,7 +13,7 @@ const userSchema = new schema({
         maxLength: 30,
         trim: true
     },
-    passowrd: {
+    password: {
         type: String,
         required: true,
         minLength: 6
@@ -46,9 +46,9 @@ const accountSchema = new schema({
 });
 
 const User = mongoose.model('User', userSchema);
-const Acccount = mongoose.model('Account', accountSchema);
+const Account = mongoose.model('Account', accountSchema);
 
 module.exports ={
     User,
-    Acccount
+    Account
 };
