@@ -1,4 +1,3 @@
-import React from 'react'
 import SignBtn from './SignBtn'
 
 const User = ({dp, name}) => {
