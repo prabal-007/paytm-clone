@@ -1,10 +1,11 @@
 import React from 'react'
 import SignBtn from '../components/SignBtn'
 import User from '../components/User'
+import Footer from '../components/Footer'
 
 const Dashboard = () => {
   return (
-    <div className='p-5 w-[100vw] h-[80vh] flex flex-col gap-4'>
+    <div className='p-5 w-[100vw] h-[100vh] flex flex-col gap-4 bg-blue-100'>
       <div className='flex justify-between border-b-2 p-2'>
         <h1 className='text-2xl font-bold'>Payments App</h1>
         <div className='flex items-center gap-2'>
@@ -24,6 +25,7 @@ const Dashboard = () => {
         <User dp={"U3"} name={"user 3"} />
         <User dp={"U4"} name={"user 4"} />
       </div>
+      <Footer />
     </div>
   )
 }
