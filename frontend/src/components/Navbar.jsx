@@ -1,5 +1,3 @@
-import { Link } from "react-router-dom"
-import SignBtn from './SignBtn'
 import PrimaryBtn from "./PrimaryBtn"
 
 const Navbar = () => {
@@ -8,9 +6,8 @@ const Navbar = () => {
       <h1 className='font-semibold text-xl font-serif'>Payments App</h1>
       <div className='flex gap-2'>
         <PrimaryBtn to={"/signup"} label={"Signup"} />
-        <PrimaryBtn to={"/signin"} label={"Signin"} />
-        {/* <Link to={"/signup"}><SignBtn label={"Signup"} /></Link>  */}
-        {/* <Link to={"/signin"}><SignBtn label={"Signin"} /></Link> */}
+        {/* <PrimaryBtn to={"/signin"} label={"Signin"} /> */}
+        <PrimaryBtn to={`${localStorage.getItem("token") ? "/dashboard" : "/signin"}`} label={"Signin"} />
       </div>
     </div>
   )
