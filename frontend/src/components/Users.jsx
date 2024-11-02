@@ -20,7 +20,7 @@ const Users = () => {
         <>
             <div className='flex flex-col gap-0'>
                 <h1 className='text-xl font-semibold'>Contacts</h1>
-                <input type="text" onChange={(e) => { setFilter(e.target.value) }} placeholder='Search contacts....' className='p-2 border w-full rounded-md font-semibold my-4' />
+                <input type="text" onChange={(e) => { setFilter(e.target.value) }} placeholder='Search contacts....' className='p-2 border w-1/2 m-5 rounded-lg font-semibold my-4' />
                 {users.map(user => <User key={user.userID} user={user} />)}
             </div>
         </>
@@ -30,7 +30,7 @@ const Users = () => {
 const User = ({ user }) => {
     const navigate = useNavigate();
     return (<>
-        <div className='font-semibold flex justify-between p-2 pb-0'>
+        <div className='font-semibold flex justify-between p-2 pb-0 mx-5'>
             <div className='font-semibold flex justify-between p-2 w-[20%]'>
                 <div className='flex items-center gap-2'>
                     <button className='rounded-full bg-gray-200 p-2 text-sm font-semibold'>{user.firstName[0]}</button>
